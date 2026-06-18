@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Tools Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, Segoe UI, Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: #38bdf8;
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.25);
+        }
+
+        .icon {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .desc {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>📈 Trading Tools Dashboard</h1>
+        <p>Access scanners, analytics, and trading journals from one place.</p>
+    </div>
+
+    <div class="grid">
+
+        <a class="card"
+           href="https://vishwarahulmailbox-stack.github.io/ce-scanner/docs/"
+           target="_blank">
+            <div class="icon">📊</div>
+            <div class="title">CE Scanner Docs</div>
+            <div class="desc">
+                Documentation and reference material for CE Scanner.
+            </div>
+        </a>
+
+        <a class="card"
+           href="https://vishwarahulmailbox-stack.github.io/ce-scanner/docs/index_open.html"
+           target="_blank">
+            <div class="icon">🚀</div>
+            <div class="title">CE Scanner</div>
+            <div class="desc">
+                Launch the live CE Scanner application.
+            </div>
+        </a>
+
+        <a class="card"
+           href="https://vishwarahulmailbox-stack.github.io/crypto-scanner/"
+           target="_blank">
+            <div class="icon">₿</div>
+            <div class="title">Crypto Scanner</div>
+            <div class="desc">
+                Scan and monitor cryptocurrency opportunities.
+            </div>
+        </a>
+
+        <a class="card"
+           href="https://vishwarahulmailbox-stack.github.io/fib-scanner-main/"
+           target="_blank">
+            <div class="icon">📐</div>
+            <div class="title">Fibonacci Scanner</div>
+            <div class="desc">
+                Identify setups using Fibonacci-based analysis.
+            </div>
+        </a>
+
+        <a class="card"
+           href="https://virtual-trader-journal.vercel.app/"
+           target="_blank">
+            <div class="icon">📝</div>
+            <div class="title">Trader Journal</div>
+            <div class="desc">
+                Record, review, and improve trading performance.
+            </div>
+        </a>
+
+    </div>
+
+    <div class="footer">
+        Trading Workspace • 2026
+    </div>
+
+</div>
+
+</body>
+</html>
