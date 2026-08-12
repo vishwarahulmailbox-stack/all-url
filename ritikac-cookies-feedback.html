@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ritikac Cookies — Tell Us How We're Baking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:        #FFF3DE;
+    --cream-soft:   #FFFAF0;
+    --crust:        #C97F3B;
+    --crust-dark:   #A85F27;
+    --cocoa:        #3E2417;
+    --choc-chip:    #2A1810;
+    --gold:         #E3A857;
+    --gold-soft:    #F3C978;
+    --shadow-brown: rgba(62, 36, 23, 0.25);
+    --success:      #6B8E4E;
+    --error:        #B54A3F;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    font-family:'Nunito Sans', sans-serif;
+    background: var(--cream);
+    color: var(--cocoa);
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* ---------- background texture: scattered crumbs & chips ---------- */
+  .crumb-field{
+    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  }
+  .crumb{
+    position:absolute; border-radius:50%;
+    background: var(--crust-dark);
+    opacity:.10;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    position:relative; z-index:2;
+    display:flex; align-items:center; justify-content:center;
+    padding: 28px 24px 8px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:12px;
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.35rem;
+    color: var(--cocoa);
+    letter-spacing:.02em;
+  }
+  .brand-mark{
+    width:34px; height:34px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, var(--gold-soft), var(--crust) 65%, var(--crust-dark));
+    box-shadow: inset -3px -3px 5px rgba(0,0,0,.25), inset 2px 2px 3px rgba(255,255,255,.35);
+    position:relative; flex-shrink:0;
+  }
+  .brand-mark::before, .brand-mark::after{
+    content:''; position:absolute; width:5px; height:5px; border-radius:50%; background:var(--choc-chip);
+  }
+  .brand-mark::before{ top:9px; left:8px; }
+  .brand-mark::after{ bottom:8px; right:9px; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative; z-index:2;
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center;
+    padding: 24px 24px 10px;
+  }
+  .eyebrow{
+    font-size:.78rem; font-weight:800; letter-spacing:.22em; text-transform:uppercase;
+    color: var(--crust-dark);
+    margin-bottom:14px;
+  }
+  h1.headline{
+    font-family:'Fraunces', serif;
+    font-weight:900;
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    line-height:1.02;
+    color: var(--cocoa);
+    max-width: 14ch;
+  }
+  h1.headline em{
+    font-style:italic; font-weight:500; color: var(--crust-dark);
+  }
+  .sub{
+    margin-top:16px;
+    font-size: clamp(1rem, 1.6vw, 1.15rem);
+    color: #6B4A34;
+    max-width: 48ch;
+    line-height:1.5;
+  }
+
+  /* ---------- 3D cookie ---------- */
+  .cookie-stage{
+    perspective: 900px;
+    margin: 34px auto 6px;
+    width: 220px; height:220px;
+    position:relative;
+  }
+  .cookie-shadow{
+    position:absolute; bottom:-18px; left:50%;
+    width:170px; height:26px;
+    background: radial-gradient(ellipse, var(--shadow-brown), transparent 70%);
+    transform: translateX(-50%);
+    animation: shadow-pulse 6s ease-in-out infinite;
+  }
+  .cookie{
+    width:100%; height:100%;
+    border-radius:50%;
+    position:relative;
+    transform-style: preserve-3d;
+    background:
+      radial-gradient(circle at 30% 25%, #E3A25B, #C97F3B 55%, #A85F27 85%);
+    box-shadow:
+      inset -10px -14px 22px rgba(62,36,23,.45),
+      inset 8px 10px 16px rgba(255, 224, 173, .5),
+      0 18px 30px var(--shadow-brown);
+    animation: cookie-spin 9s linear infinite, cookie-float 6s ease-in-out infinite;
+  }
+  .chip{
+    position:absolute; border-radius:44% 56% 52% 48% / 50% 45% 55% 50%;
+    background: radial-gradient(circle at 35% 30%, #4A2E1C, var(--choc-chip) 70%);
+    box-shadow: inset -1px -1px 2px rgba(0,0,0,.5), 1px 1px 1px rgba(255,255,255,.15);
+  }
+  .chip:nth-child(1){ width:26px; height:22px; top:24%; left:30%; }
+  .chip:nth-child(2){ width:20px; height:18px; top:55%; left:20%; }
+  .chip:nth-child(3){ width:24px; height:20px; top:62%; left:58%; }
+  .chip:nth-child(4){ width:18px; height:16px; top:30%; left:62%; }
+  .chip:nth-child(5){ width:16px; height:14px; top:45%; left:44%; }
+  .chip:nth-child(6){ width:14px; height:13px; top:20%; left:52%; }
+
+  @keyframes cookie-spin{
+    from{ transform: rotateY(0deg) rotateX(6deg); }
+    to{ transform: rotateY(360deg) rotateX(6deg); }
+  }
+  @keyframes cookie-float{
+    0%, 100%{ margin-top:0px; }
+    50%{ margin-top:-14px; }
+  }
+  @keyframes shadow-pulse{
+    0%, 100%{ opacity:.7; transform: translateX(-50%) scale(1); }
+    50%{ opacity:.4; transform: translateX(-50%) scale(.82); }
+  }
+
+  /* ---------- feedback card ---------- */
+  main{ position:relative; z-index:2; display:flex; justify-content:center; padding: 34px 20px 10px; }
+
+  .card{
+    width:100%; max-width: 560px;
+    background: var(--cream-soft);
+    border-radius: 28px;
+    padding: 40px clamp(22px, 5vw, 46px) 38px;
+    position:relative;
+    box-shadow:
+      0 2px 0 rgba(255,255,255,.6) inset,
+      0 24px 48px -18px rgba(62,36,23,.35);
+    border: 1px solid rgba(169, 118, 65, .18);
+  }
+  /* scalloped cookie-cutter edge */
+  .card::before{
+    content:'';
+    position:absolute; inset:10px;
+    border-radius:20px;
+    border: 2px dashed rgba(169,118,65,.35);
+    pointer-events:none;
+  }
+
+  .card h2{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.6rem;
+    text-align:center;
+    margin-bottom: 6px;
+  }
+  .card .card-sub{
+    text-align:center;
+    font-size:.92rem;
+    color:#7A5A42;
+    margin-bottom: 28px;
+  }
+
+  label{
+    display:block;
+    font-weight:800;
+    font-size:.78rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color: var(--crust-dark);
+    margin-bottom:8px;
+  }
+  .field{ margin-bottom: 24px; }
+
+  input[type="text"], textarea{
+    width:100%;
+    font-family:'Nunito Sans', sans-serif;
+    font-size:1rem;
+    color: var(--cocoa);
+    background: #fff;
+    border: 2px solid rgba(169,118,65,.25);
+    border-radius: 14px;
+    padding: 13px 16px;
+    outline:none;
+    transition: border-color .18s ease, box-shadow .18s ease;
+  }
+  input[type="text"]:focus, textarea:focus{
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(227,168,87,.25);
+  }
+  textarea{ resize:vertical; min-height:100px; line-height:1.5; }
+
+  /* mood picker */
+  .mood-row{
+    display:flex; justify-content:space-between; gap:8px;
+  }
+  .mood-btn{
+    flex:1;
+    aspect-ratio:1;
+    max-width:74px;
+    border-radius:50%;
+    border: 2px solid rgba(169,118,65,.25);
+    background: radial-gradient(circle at 35% 30%, #FFE8C2, #F3C978 70%);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem;
+    cursor:pointer;
+    position:relative;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .mood-btn::after{
+    content:'';
+    position:absolute; inset:-6px;
+    border-radius:50%;
+    border: 2px solid transparent;
+    transition: border-color .15s ease;
+  }
+  .mood-btn span.label{
+    position:absolute; bottom:-22px; left:50%; transform:translateX(-50%);
+    font-size:.66rem; font-weight:700; color:#8A6748; white-space:nowrap;
+    opacity:0; transition:opacity .15s ease;
+  }
+  .mood-btn:hover span.label, .mood-btn.selected span.label{ opacity:1; }
+  .mood-btn:hover{ transform: translateY(-3px); }
+  .mood-btn.selected{
+    border-color: var(--crust-dark);
+    box-shadow: 0 10px 18px -8px var(--shadow-brown), inset -3px -4px 8px rgba(62,36,23,.3);
+    transform: translateY(-5px) scale(1.06);
+  }
+  .mood-row-wrap{ margin-bottom: 34px; padding-bottom:14px; }
+
+  button.submit{
+    width:100%;
+    font-family:'Nunito Sans', sans-serif;
+    font-weight:800;
+    font-size:1.02rem;
+    letter-spacing:.01em;
+    color: var(--cream-soft);
+    background: linear-gradient(180deg, #D68F45, var(--crust-dark));
+    border:none;
+    border-radius:16px;
+    padding:16px;
+    cursor:pointer;
+    box-shadow: 0 10px 22px -8px rgba(168,95,39,.65), inset 0 1px 0 rgba(255,255,255,.25);
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  }
+  button.submit:hover{ transform: translateY(-2px); filter:brightness(1.04); }
+  button.submit:active{ transform: translateY(0px) scale(.99); }
+  button.submit:disabled{ opacity:.6; cursor:not-allowed; transform:none; }
+
+  .status-msg{
+    margin-top:16px;
+    text-align:center;
+    font-weight:700;
+    font-size:.92rem;
+    min-height: 1.3em;
+  }
+  .status-msg.success{ color: var(--success); }
+  .status-msg.error{ color: var(--error); }
+
+  .error-text{
+    color: var(--error);
+    font-size:.78rem;
+    font-weight:700;
+    margin-top:6px;
+    display:none;
+  }
+  .field.invalid input, .field.invalid textarea{ border-color: var(--error); }
+  .field.invalid .error-text{ display:block; }
+
+  /* ---------- footer ---------- */
+  footer{
+    position:relative; z-index:2;
+    margin-top: 54px;
+    padding: 30px 20px 34px;
+    text-align:center;
+    border-top: 2px dashed rgba(169,118,65,.35);
+  }
+  footer .foot-brand{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:1.05rem;
+    margin-bottom:10px;
+    color: var(--cocoa);
+  }
+  footer .foot-line{
+    font-size:.86rem;
+    color:#7A5A42;
+    line-height:1.9;
+  }
+  footer a{ color: var(--crust-dark); text-decoration:none; font-weight:700; }
+  footer a:hover{ text-decoration:underline; }
+
+  @media (prefers-reduced-motion: reduce){
+    .cookie, .cookie-shadow{ animation:none; }
+  }
+
+  @media (max-width:420px){
+    .mood-btn{ font-size:1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="crumb-field" id="crumbField"></div>
+
+<header>
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    Ritikac Cookies
+  </div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Fresh from the oven, straight to us</div>
+  <h1 class="headline">How did we <em>crumble</em> today?</h1>
+  <p class="sub">A quick note from you helps us bake it better next time. Takes less than a minute.</p>
+
+  <div class="cookie-stage" aria-hidden="true">
+    <div class="cookie-shadow"></div>
+    <div class="cookie">
+      <div class="chip"></div>
+      <div class="chip"></div>
+      <div class="chip"></div>
+      <div class="chip"></div>
+      <div class="chip"></div>
+      <div class="chip"></div>
+    </div>
+  </div>
+</section>
+
+<main>
+  <form class="card" id="feedbackForm" novalidate>
+    <h2>Share your feedback</h2>
+    <p class="card-sub">Your name, your mood, your words — that's all we need.</p>
+
+    <div class="field" id="nameField">
+      <label for="name">Your name</label>
+      <input type="text" id="name" name="name" placeholder="e.g. Priya Sharma" autocomplete="name">
+      <div class="error-text">Please tell us your name.</div>
+    </div>
+
+    <div class="field mood-row-wrap" id="moodField">
+      <label>How happy are you with us?</label>
+      <div class="mood-row" id="moodRow" role="radiogroup" aria-label="Happiness rating">
+        <button type="button" class="mood-btn" data-mood="Very Unhappy" role="radio" aria-checked="false">😞<span class="label">Not great</span></button>
+        <button type="button" class="mood-btn" data-mood="Unhappy" role="radio" aria-checked="false">😕<span class="label">Meh</span></button>
+        <button type="button" class="mood-btn" data-mood="Neutral" role="radio" aria-checked="false">🙂<span class="label">Okay</span></button>
+        <button type="button" class="mood-btn" data-mood="Happy" role="radio" aria-checked="false">😄<span class="label">Good</span></button>
+        <button type="button" class="mood-btn" data-mood="Delighted" role="radio" aria-checked="false">🤩<span class="label">Loved it</span></button>
+      </div>
+      <div class="error-text">Please pick how you're feeling.</div>
+    </div>
+
+    <div class="field" id="commentField">
+      <label for="comment">Your comment</label>
+      <textarea id="comment" name="comment" placeholder="Tell us what you loved, or what we can improve..."></textarea>
+      <div class="error-text">Please add a short comment.</div>
+    </div>
+
+    <button type="submit" class="submit" id="submitBtn">Submit Feedback</button>
+    <div class="status-msg" id="statusMsg" role="status" aria-live="polite"></div>
+  </form>
+</main>
+
+<footer>
+  <div class="foot-brand">Ritikac Cookies</div>
+  <div class="foot-line">
+    Vashi, Navi Mumbai<br>
+    Call <a href="tel:+919892337798">9892337798</a> &nbsp;·&nbsp;
+    Email <a href="mailto:rahul@gmail.com">rahul@gmail.com</a>
+  </div>
+</footer>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  // ---------------------------------------------------------------
+  // SUPABASE CONFIG — replace with your own project's values.
+  // Find these under Project Settings → API in your Supabase dashboard.
+  // ---------------------------------------------------------------
+  const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+  let supabase = null;
+  const configured = !SUPABASE_URL.includes('YOUR_') && !SUPABASE_ANON_KEY.includes('YOUR_');
+  if (configured) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+
+  // ---------------------------------------------------------------
+  // Background crumb field
+  // ---------------------------------------------------------------
+  const crumbField = document.getElementById('crumbField');
+  const CRUMB_COUNT = 22;
+  for (let i = 0; i < CRUMB_COUNT; i++) {
+    const c = document.createElement('div');
+    c.className = 'crumb';
+    const size = 3 + Math.random() * 9;
+    c.style.width = size + 'px';
+    c.style.height = size + 'px';
+    c.style.top = Math.random() * 100 + '%';
+    c.style.left = Math.random() * 100 + '%';
+    crumbField.appendChild(c);
+  }
+
+  // ---------------------------------------------------------------
+  // Mood picker
+  // ---------------------------------------------------------------
+  const moodButtons = document.querySelectorAll('.mood-btn');
+  let selectedMood = null;
+  moodButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      moodButtons.forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-checked', 'false'); });
+      btn.classList.add('selected');
+      btn.setAttribute('aria-checked', 'true');
+      selectedMood = btn.dataset.mood;
+      document.getElementById('moodField').classList.remove('invalid');
+    });
+  });
+
+  // ---------------------------------------------------------------
+  // Form submit
+  // ---------------------------------------------------------------
+  const form = document.getElementById('feedbackForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const statusMsg = document.getElementById('statusMsg');
+
+  function setInvalid(fieldId, invalid) {
+    document.getElementById(fieldId).classList.toggle('invalid', invalid);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    statusMsg.textContent = '';
+    statusMsg.className = 'status-msg';
+
+    const name = document.getElementById('name').value.trim();
+    const comment = document.getElementById('comment').value.trim();
+
+    let valid = true;
+    setInvalid('nameField', !name);
+    setInvalid('moodField', !selectedMood);
+    setInvalid('commentField', !comment);
+    if (!name || !selectedMood || !comment) valid = false;
+    if (!valid) return;
+
+    if (!configured) {
+      statusMsg.textContent = 'Supabase isn\'t connected yet — add your project URL and anon key in the script to enable saving.';
+      statusMsg.classList.add('error');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    try {
+      const { error } = await supabase
+        .from('feedback')
+        .insert([{ name, mood: selectedMood, comment }]);
+
+      if (error) throw error;
+
+      statusMsg.textContent = 'Thank you! Your feedback has been received. 🍪';
+      statusMsg.classList.add('success');
+      form.reset();
+      moodButtons.forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-checked', 'false'); });
+      selectedMood = null;
+    } catch (err) {
+      console.error(err);
+      statusMsg.textContent = 'Something went wrong. Please try again in a moment.';
+      statusMsg.classList.add('error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Feedback';
+    }
+  });
+</script>
+
+</body>
+</html>
