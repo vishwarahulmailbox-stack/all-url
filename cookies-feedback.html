@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ritikac Cookies — Feedback Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:        #FFF3DE;
+    --cream-soft:   #FFFAF0;
+    --crust:        #C97F3B;
+    --crust-dark:   #A85F27;
+    --cocoa:        #3E2417;
+    --choc-chip:    #2A1810;
+    --gold:         #E3A857;
+    --gold-soft:    #F3C978;
+    --shadow-brown: rgba(62, 36, 23, 0.25);
+    --success:      #6B8E4E;
+    --error:        #B54A3F;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  body{
+    font-family:'Nunito Sans', sans-serif;
+    background: var(--cream);
+    color: var(--cocoa);
+    min-height:100vh;
+  }
+
+  /* ---------- gate ---------- */
+  #gate{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .gate-card{
+    background: var(--cream-soft);
+    border-radius:24px;
+    padding: 36px 32px;
+    max-width:360px; width:100%;
+    text-align:center;
+    box-shadow: 0 24px 48px -18px rgba(62,36,23,.35);
+    border: 1px solid rgba(169,118,65,.18);
+  }
+  .gate-card h2{ font-family:'Fraunces', serif; font-size:1.4rem; margin-bottom:6px; }
+  .gate-card p{ font-size:.86rem; color:#7A5A42; margin-bottom:20px; }
+  .gate-card input{
+    width:100%; font-size:1rem; padding:12px 14px; border-radius:12px;
+    border:2px solid rgba(169,118,65,.25); margin-bottom:14px; outline:none;
+  }
+  .gate-card input:focus{ border-color:var(--gold); }
+  .gate-card button{
+    width:100%; padding:13px; border:none; border-radius:12px;
+    font-weight:800; color:#fff; cursor:pointer;
+    background: linear-gradient(180deg, #D68F45, var(--crust-dark));
+  }
+  .gate-error{ color:var(--error); font-size:.82rem; font-weight:700; margin-top:10px; min-height:1.2em; }
+
+  /* ---------- app ---------- */
+  #app{ display:none; }
+
+  header{
+    padding: 26px clamp(18px, 4vw, 48px);
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    border-bottom: 2px dashed rgba(169,118,65,.3);
+  }
+  .brand{
+    display:flex; align-items:center; gap:12px;
+    font-family:'Fraunces', serif; font-weight:700; font-size:1.25rem;
+  }
+  .brand-mark{
+    width:30px; height:30px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, var(--gold-soft), var(--crust) 65%, var(--crust-dark));
+    box-shadow: inset -3px -3px 5px rgba(0,0,0,.25), inset 2px 2px 3px rgba(255,255,255,.35);
+    position:relative; flex-shrink:0;
+  }
+  .brand-mark::before, .brand-mark::after{ content:''; position:absolute; width:4px; height:4px; border-radius:50%; background:var(--choc-chip); }
+  .brand-mark::before{ top:8px; left:7px; }
+  .brand-mark::after{ bottom:7px; right:8px; }
+  header .eyebrow{ font-size:.78rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--crust-dark); }
+
+  #refreshBtn{
+    border:2px solid rgba(169,118,65,.3); background:var(--cream-soft); color:var(--cocoa);
+    font-weight:800; font-size:.82rem; padding:10px 18px; border-radius:12px; cursor:pointer;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  #refreshBtn:hover{ border-color:var(--gold); transform:translateY(-1px); }
+  #refreshBtn:active{ transform:translateY(0); }
+
+  main{ padding: 30px clamp(18px, 4vw, 48px) 60px; max-width:1080px; margin:0 auto; }
+
+  /* stat cards */
+  .stats{ display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:16px; margin-bottom:30px; }
+  .stat-card{
+    background: var(--cream-soft); border-radius:18px; padding:20px;
+    border:1px solid rgba(169,118,65,.18);
+    box-shadow: 0 10px 22px -14px rgba(62,36,23,.3);
+  }
+  .stat-card .num{ font-family:'Fraunces', serif; font-weight:800; font-size:2rem; line-height:1; }
+  .stat-card .lbl{ font-size:.76rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#8A6748; margin-top:6px; }
+
+  /* mood distribution */
+  .breakdown{
+    background: var(--cream-soft); border-radius:18px; padding:22px 24px;
+    border:1px solid rgba(169,118,65,.18);
+    margin-bottom:30px;
+  }
+  .breakdown h3{ font-family:'Fraunces', serif; font-size:1.05rem; margin-bottom:16px; }
+  .bar-row{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .bar-row:last-child{ margin-bottom:0; }
+  .bar-emoji{ font-size:1.1rem; width:26px; text-align:center; }
+  .bar-track{ flex:1; height:12px; border-radius:8px; background:rgba(169,118,65,.14); overflow:hidden; }
+  .bar-fill{ height:100%; border-radius:8px; background: linear-gradient(90deg, var(--gold-soft), var(--crust-dark)); transition:width .5s ease; }
+  .bar-count{ font-size:.8rem; font-weight:800; width:26px; text-align:right; color:#7A5A42; }
+
+  /* controls */
+  .controls{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+  .controls input[type="text"]{
+    flex:1; min-width:180px; padding:11px 14px; border-radius:12px;
+    border:2px solid rgba(169,118,65,.25); font-size:.92rem; outline:none; background:var(--cream-soft);
+  }
+  .controls input[type="text"]:focus{ border-color:var(--gold); }
+  .controls select{
+    padding:11px 14px; border-radius:12px; border:2px solid rgba(169,118,65,.25);
+    font-size:.9rem; font-weight:700; background:var(--cream-soft); color:var(--cocoa); outline:none; cursor:pointer;
+  }
+
+  /* list */
+  #list{ display:flex; flex-direction:column; gap:12px; }
+  .entry{
+    background: var(--cream-soft); border-radius:16px; padding:16px 20px;
+    border:1px solid rgba(169,118,65,.16);
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .entry .emoji{ font-size:1.6rem; margin-top:2px; }
+  .entry .body{ flex:1; min-width:0; }
+  .entry .row1{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .entry .name{ font-weight:800; font-size:.98rem; }
+  .entry .date{ font-size:.74rem; color:#8A6748; font-weight:700; white-space:nowrap; }
+  .entry .comment{ margin-top:6px; font-size:.92rem; color:#5C4230; line-height:1.5; word-break:break-word; }
+
+  .empty, .loading, .error-state{
+    text-align:center; padding:50px 20px; color:#8A6748; font-weight:700;
+  }
+  .error-state{ color:var(--error); }
+
+  footer.page-foot{
+    text-align:center; padding: 20px; font-size:.78rem; color:#a9825f;
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-card">
+    <h2>🍪 Team Access</h2>
+    <p>Enter the passcode to view Ritikac Cookies feedback.</p>
+    <input type="password" id="passcodeInput" placeholder="Passcode">
+    <button id="unlockBtn">Unlock</button>
+    <div class="gate-error" id="gateError"></div>
+  </div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      Ritikac Cookies
+    </div>
+    <div class="eyebrow">Feedback Overview</div>
+    <button id="refreshBtn">Refresh</button>
+  </header>
+
+  <main>
+    <div class="stats">
+      <div class="stat-card"><div class="num" id="statTotal">–</div><div class="lbl">Total responses</div></div>
+      <div class="stat-card"><div class="num" id="statHappy">–</div><div class="lbl">% Happy or better</div></div>
+      <div class="stat-card"><div class="num" id="statToday">–</div><div class="lbl">Today</div></div>
+    </div>
+
+    <div class="breakdown">
+      <h3>Mood breakdown</h3>
+      <div id="barRows"></div>
+    </div>
+
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="Search by name or comment...">
+      <select id="moodFilter">
+        <option value="">All moods</option>
+        <option value="Very Unhappy">😞 Not great</option>
+        <option value="Unhappy">😕 Meh</option>
+        <option value="Neutral">🙂 Okay</option>
+        <option value="Happy">😄 Good</option>
+        <option value="Delighted">🤩 Loved it</option>
+      </select>
+    </div>
+
+    <div id="list"></div>
+  </main>
+
+  <footer class="page-foot">Vashi, Navi Mumbai · 9892337798 · rahul@gmail.com</footer>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+  const SUPABASE_URL = 'https://hpgcubpglrlkgqupiqus.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_L14mgWb63ae_REAWwPojvw_74gxMD4z';
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ---------------------------------------------------------------
+  // Simple passcode gate. This is a LIGHT deterrent only — the page
+  // and data are not truly secured by this. Anyone who can view the
+  // page source can see this value. For real access control, set up
+  // Supabase Auth + a Row Level Security policy restricting SELECT
+  // to signed-in staff.
+  // ---------------------------------------------------------------
+  const PASSCODE = 'cookies123';
+
+  const gate = document.getElementById('gate');
+  const app = document.getElementById('app');
+  const passcodeInput = document.getElementById('passcodeInput');
+  const gateError = document.getElementById('gateError');
+
+  function unlock(){
+    if (passcodeInput.value === PASSCODE) {
+      gate.style.display = 'none';
+      app.style.display = 'block';
+      loadFeedback();
+    } else {
+      gateError.textContent = 'Incorrect passcode. Try again.';
+    }
+  }
+  document.getElementById('unlockBtn').addEventListener('click', unlock);
+  passcodeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') unlock(); });
+
+  const MOOD_META = {
+    'Very Unhappy': { emoji: '😞', order: 0 },
+    'Unhappy':      { emoji: '😕', order: 1 },
+    'Neutral':      { emoji: '🙂', order: 2 },
+    'Happy':        { emoji: '😄', order: 3 },
+    'Delighted':    { emoji: '🤩', order: 4 },
+  };
+
+  let allEntries = [];
+
+  async function loadFeedback(){
+    const list = document.getElementById('list');
+    list.innerHTML = '<div class="loading">Loading feedback...</div>';
+
+    const { data, error } = await supabase
+      .from('feedback')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error(error);
+      list.innerHTML = '<div class="error-state">Could not load feedback. Check that the "feedback" table has a SELECT policy enabled for this key.</div>';
+      return;
+    }
+
+    allEntries = data || [];
+    renderStats(allEntries);
+    renderList(allEntries);
+  }
+
+  function renderStats(entries){
+    const total = entries.length;
+    document.getElementById('statTotal').textContent = total;
+
+    const happyCount = entries.filter(e => ['Happy','Delighted'].includes(e.mood)).length;
+    document.getElementById('statHappy').textContent = total ? Math.round((happyCount/total)*100) + '%' : '–';
+
+    const today = new Date().toDateString();
+    const todayCount = entries.filter(e => new Date(e.created_at).toDateString() === today).length;
+    document.getElementById('statToday').textContent = todayCount;
+
+    const counts = {};
+    Object.keys(MOOD_META).forEach(m => counts[m] = 0);
+    entries.forEach(e => { if (counts[e.mood] !== undefined) counts[e.mood]++; });
+    const max = Math.max(1, ...Object.values(counts));
+
+    const barRows = document.getElementById('barRows');
+    barRows.innerHTML = '';
+    Object.keys(MOOD_META).sort((a,b) => MOOD_META[a].order - MOOD_META[b].order).forEach(mood => {
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML = `
+        <div class="bar-emoji">${MOOD_META[mood].emoji}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(counts[mood]/max)*100}%"></div></div>
+        <div class="bar-count">${counts[mood]}</div>
+      `;
+      barRows.appendChild(row);
+    });
+  }
+
+  function renderList(entries){
+    const list = document.getElementById('list');
+    if (!entries.length) {
+      list.innerHTML = '<div class="empty">No feedback yet — check back once customers start responding.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    entries.forEach(e => {
+      const div = document.createElement('div');
+      div.className = 'entry';
+      const meta = MOOD_META[e.mood] || { emoji: '🍪' };
+      const dt = e.created_at ? new Date(e.created_at).toLocaleString('en-IN', { dateStyle:'medium', timeStyle:'short' }) : '';
+      div.innerHTML = `
+        <div class="emoji">${meta.emoji}</div>
+        <div class="body">
+          <div class="row1">
+            <div class="name">${escapeHtml(e.name || 'Anonymous')}</div>
+            <div class="date">${dt}</div>
+          </div>
+          <div class="comment">${escapeHtml(e.comment || '')}</div>
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function applyFilters(){
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const mood = document.getElementById('moodFilter').value;
+    let filtered = allEntries;
+    if (mood) filtered = filtered.filter(e => e.mood === mood);
+    if (q) filtered = filtered.filter(e =>
+      (e.name || '').toLowerCase().includes(q) || (e.comment || '').toLowerCase().includes(q)
+    );
+    renderList(filtered);
+  }
+
+  document.getElementById('searchInput').addEventListener('input', applyFilters);
+  document.getElementById('moodFilter').addEventListener('change', applyFilters);
+  document.getElementById('refreshBtn').addEventListener('click', loadFeedback);
+</script>
+
+</body>
+</html>
