@@ -66,20 +66,20 @@
     transition: opacity 0.4s ease;
   }
   .stage.out{ opacity:0; }
-  .stage.wide{ max-width:min(1200px, 92vw); height:88vh; max-height:660px; }
+  .stage.wide{ max-width:95vw; height:88vh; max-height:660px; }
 
-  /* ---- 40/60 split layout (screenshot + text), used by scenes 4-7 ---- */
+  /* ---- 30/70 split layout (screenshot + text), used by scenes 4-7 ---- */
   .split-stage{
     display:flex; align-items:stretch; gap:44px; width:100%; height:100%;
     padding:0 12px;
   }
   .split-text{
-    flex:0 0 40%; max-width:40%; min-width:0; display:flex; flex-direction:column; justify-content:center;
+    flex:0 0 30%; max-width:30%; min-width:0; display:flex; flex-direction:column; justify-content:center;
   }
   .split-text .headline{ text-align:left; margin-bottom:26px; }
   .split-text .caption{ text-align:left; max-width:100%; margin-top:0; }
   .split-image{
-    flex:0 0 60%; max-width:60%; min-width:0; display:flex; align-items:stretch; justify-content:center;
+    flex:0 0 70%; max-width:70%; min-width:0; display:flex; align-items:stretch; justify-content:center;
   }
   .split-placeholder{
     width:100%; height:100%; border:2px dashed var(--panel-border); border-radius:16px;
@@ -193,7 +193,7 @@
   .orbit-chip-inner{ animation: floaty 3.4s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
   @keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
 
-  /* ---- screen 8: Salesforce Platform tree (compact vertical, sits in the 40% text column) ---- */
+  /* ---- screen 8: Salesforce Platform tree (compact vertical, sits in the 30% text column) ---- */
   .platform-tree-v{
     display:flex; flex-direction:column; align-items:flex-start; margin-top:26px; width:100%;
   }
@@ -308,7 +308,7 @@ const scenes = [
   { headline:"NetFlow Adviser", caption:"Relatively mass market relationship management with AFS Licensees and planners.<br> <b>Goal is to deepen and broaden product distribution including via platforms.</b>", visual:"hub", activeBranch:"adviser", layout:"split", imageSide:"right", screenshot:"Screen 6.png" },
   { headline:"NetFlow Private Capital", caption:"A system of record and investment administration for boutique non-unitised products, investors, borrowers and investee companies.", visual:"hub", activeBranch:"privatecapital", layout:"split", imageSide:"left", screenshot:"Screen 7.png" },
   { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform", layout:"split", imageSide:"right", screenshot:"Screen 8.png" },
-  { headline:"NetFlow value prop for Salesforce", caption:"Unlocks for <b>Salesforce</b> by NetFlow", visual:"valuegrid" },
+  { headline:"NetFlow value prop for Salesforce", caption:"Unlocks for <b>Salesforce</b> by NetFlow", visual:"valuegrid", wide:true },
   { headline:"gonetflow.com", caption:"Contact <b>Atlas Consulting</b> — atlasconsulting.com.au", visual:"contact" }
 ];
 
@@ -376,7 +376,7 @@ function buildHubVisual(activeBranch){
 }
 
 function buildComposableInline(){
-  /* smaller version of the puzzle graphic, sized to sit inside the 40% text column below the caption */
+  /* smaller version of the puzzle graphic, sized to sit inside the 30% text column below the caption */
   const overlays = [
     { id:"hni", label:"HNI", top:"28%", left:"28%", scale:0.5 },
     { id:"institutional", label:"Institutional", top:"28%", left:"72%", scale:0.32 },
@@ -499,7 +499,7 @@ function buildImagePlaceholder(s){
       <div class="split-placeholder">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--ink-dim)" stroke-width="1.5"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5-4 4-3-3-5 5"/></svg>
         <div class="ph-label">Screenshot placeholder</div>
-        <div class="ph-sub">fills 60% width · full stage height</div>
+        <div class="ph-sub">fills 70% width · full stage height</div>
       </div>
     </div>`;
 }
@@ -523,7 +523,7 @@ function buildPlatformTreeBlock(){
 }
 
 function buildPlatformTreeInline(){
-  /* compact vertical tree that sits inside the 40% text column, below the caption */
+  /* compact vertical tree that sits inside the 30% text column, below the caption */
   const children = ["Agentforce Financial Services", "Agentforce Sales", "Tableau", "Agentforce"];
   const rows = children.map((label,i) => `
     <div class="tree-stem-v" style="animation-delay:${0.55 + 3*i}s"></div>
@@ -568,7 +568,7 @@ dotsWrap.innerHTML = scenes.map((_, i) => `<div class="dot" data-i="${i}"></div>
 const dotEls = [...dotsWrap.children];
 
 function renderScene(s){
-  stage.classList.toggle('wide', s.layout === 'split');
+  stage.classList.toggle('wide', s.layout === 'split' || s.wide === true);
   if (s.layout === 'split') {
     stage.innerHTML = buildSplitScene(s);
   } else {
