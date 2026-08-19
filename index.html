@@ -91,6 +91,12 @@
   .split-placeholder svg{ opacity:0.45; width:44px; height:44px; }
   .split-placeholder .ph-label{ font-size:14px; font-weight:500; letter-spacing:0.02em; }
   .split-placeholder .ph-sub{ font-size:11px; opacity:0.75; }
+  .split-screenshot{
+    width:100%; height:100%; object-fit:cover; border-radius:20px;
+    box-shadow:0 14px 34px rgba(28,29,31,0.10); border:1px solid var(--panel-border);
+    opacity:0; transform:translateY(14px);
+    animation: cardIn 0.55s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:0.25s;
+  }
 
   .headline{
     font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-weight:500;
@@ -296,12 +302,12 @@ const HUB_NODES = [
 const scenes = [
   { headline:"", caption:"Built for <b>Wealth Management</b>", visual:"title" },
   { headline:"NetFlow target market", caption:"A combination some or all of the above which is very prevalent in the industry", visual:"market" },
-  { headline:"What is NetFlow?", caption:"NetFlow is a composable suite of <b>relationship management solutions</b>", visual:"composable", layout:"split", imageSide:"left" },
-  { headline:"NetFlow HNI", caption:"Manage close relationships with ultra high and high net worth investors including family offices, and their investment vehicles.<br> <b>Deliver highly personalised service.</b>", visual:"hub", activeBranch:"hni", layout:"split", imageSide:"right" },
-  { headline:"NetFlow Institutional", caption:"Source and bid for mandates from Institutional Investors and Super funds. <b>Manage mandate compliance and reporting.</b>", visual:"hub", activeBranch:"institutional", layout:"split", imageSide:"left" },
-  { headline:"NetFlow Adviser", caption:"Relatively mass market relationship management with AFS Licensees and planners.<b>Goal is to deepen and broaden product distribution including via platforms.</b>", visual:"hub", activeBranch:"adviser", layout:"split", imageSide:"right" },
-  { headline:"NetFlow Private Capital", caption:"A system of record and investment administration for boutique non-unitised products, investors, borrowers and investee companies.", visual:"hub", activeBranch:"privatecapital", layout:"split", imageSide:"left" },
-  { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform", layout:"split", imageSide:"right" },
+  { headline:"What is NetFlow?", caption:"NetFlow is a composable suite of <b>relationship management solutions</b>", visual:"composable", layout:"split", imageSide:"left", screenshot:"Screen 3.png" },
+  { headline:"NetFlow HNI", caption:"Manage close relationships with ultra high and high net worth investors including family offices, and their investment vehicles.<br> <b>Deliver highly personalised service.</b>", visual:"hub", activeBranch:"hni", layout:"split", imageSide:"right", screenshot:"Screen 4.png" },
+  { headline:"NetFlow Institutional", caption:"Source and bid for mandates from Institutional Investors and Super funds. <br> <b>Manage mandate compliance and reporting.</b>", visual:"hub", activeBranch:"institutional", layout:"split", imageSide:"left", screenshot:"Screen 5.png" },
+  { headline:"NetFlow Adviser", caption:"Relatively mass market relationship management with AFS Licensees and planners.<br> <b>Goal is to deepen and broaden product distribution including via platforms.</b>", visual:"hub", activeBranch:"adviser", layout:"split", imageSide:"right", screenshot:"Screen 6.png" },
+  { headline:"NetFlow Private Capital", caption:"A system of record and investment administration for boutique non-unitised products, investors, borrowers and investee companies.", visual:"hub", activeBranch:"privatecapital", layout:"split", imageSide:"left", screenshot:"Screen 7.png" },
+  { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform", layout:"split", imageSide:"right", screenshot:"Screen 8.png" },
   { headline:"NetFlow value prop for Salesforce", caption:"Unlocks for <b>Salesforce</b> by NetFlow", visual:"valuegrid" },
   { headline:"gonetflow.com", caption:"Contact <b>Atlas Consulting</b> — atlasconsulting.com.au", visual:"contact" }
 ];
@@ -481,7 +487,13 @@ function buildVisual(s){
   return `<div class="visualzone">${inner}</div>`;
 }
 
-function buildImagePlaceholder(){
+function buildImagePlaceholder(s){
+  if (s && s.screenshot) {
+    return `
+    <div class="split-image">
+      <img class="split-screenshot" src="${s.screenshot}" alt="${s.headline} screenshot"/>
+    </div>`;
+  }
   return `
     <div class="split-image">
       <div class="split-placeholder">
@@ -514,10 +526,10 @@ function buildPlatformTreeInline(){
   /* compact vertical tree that sits inside the 40% text column, below the caption */
   const children = ["Agentforce Financial Services", "Agentforce Sales", "Tableau", "Agentforce"];
   const rows = children.map((label,i) => `
-    <div class="tree-stem-v" style="animation-delay:${0.55 + 0.22*i}s"></div>
+    <div class="tree-stem-v" style="animation-delay:${0.55 + 3*i}s"></div>
     <div class="tree-row-v">
-      <div class="tree-elbow-v" style="animation-delay:${0.62 + 0.22*i}s"></div>
-      <div class="tree-child-box-v" style="animation-delay:${0.68 + 0.22*i}s">${label}</div>
+      <div class="tree-elbow-v" style="animation-delay:${0.62 + 3*i}s"></div>
+      <div class="tree-child-box-v" style="animation-delay:${0.68 + 3*i}s">${label}</div>
     </div>`).join("");
   return `
     <div class="platform-tree-v">
@@ -536,7 +548,7 @@ function buildSplitScene(s){
       <div class="caption">${s.caption}</div>
       ${extraVisual}
     </div>`;
-  const imageBlock = buildImagePlaceholder();
+  const imageBlock = buildImagePlaceholder(s);
   const parts = s.imageSide === "left" ? [imageBlock, textBlock] : [textBlock, imageBlock];
   return `<div class="split-stage">${parts.join("")}</div>`;
 }
