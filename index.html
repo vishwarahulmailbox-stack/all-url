@@ -156,7 +156,18 @@
 
   .seg-card{ opacity:0; transform:translateY(18px); animation: cardIn 0.55s cubic-bezier(.2,.7,.2,1) forwards; transform-box:fill-box; transform-origin:center; }
   @keyframes cardIn{ to{ opacity:1; transform:translateY(0); } }
-  .seg-icon-circle{ animation: pulseRing 2.4s ease-in-out infinite; transform-origin:center; }
+
+  /* ---- screen 2: cycle the spotlight through each circle, 3s per circle, looping ---- */
+  .seg-icon-circle{ transform-box:fill-box; transform-origin:center; animation: segHighlight 12s ease-in-out infinite; }
+  @keyframes segHighlight{
+    0%, 22%{ stroke:var(--gold); stroke-width:2.5px; filter:drop-shadow(0 0 7px rgba(169,122,56,0.55)); transform:scale(1.08); }
+    28%, 100%{ stroke:var(--panel-border); stroke-width:1.5px; filter:none; transform:scale(1); }
+  }
+  .seg-card-label{ animation: segLabelHighlight 12s ease-in-out infinite; }
+  @keyframes segLabelHighlight{
+    0%, 22%{ color:var(--gold); font-weight:600; }
+    28%, 100%{ color:var(--ink-dim); font-weight:400; }
+  }
   @keyframes pulseRing{ 0%,100%{ opacity:0.3; } 50%{ opacity:0.75; } }
 
   .hub-line{ stroke:var(--panel-border); stroke-width:2; fill:none; stroke-dasharray:220; stroke-dashoffset:220; animation: drawLine 0.9s cubic-bezier(.3,.7,.3,1) forwards; }
@@ -226,8 +237,8 @@ const scenes = [
   { headline:"NetFlow target market", caption:"A combination some or all of the above which is very prevalent in the industry", visual:"market" },
   { headline:"What is NetFlow?", caption:"NetFlow is a composable suite of <b>relationship management solutions</b>", visual:"composable", layout:"split", imageSide:"left" },
   { headline:"NetFlow HNI", caption:"Manage close relationships with ultra high and high net worth investors including family offices, and their investment vehicles.<br> <b>Deliver highly personalised service.</b>", visual:"hub", activeBranch:"hni", layout:"split", imageSide:"right" },
-  { headline:"NetFlow Institutional", caption:"Source and bid for mandates from Institutional Investors and Super funds. <br> <b>Manage mandate compliance and reporting.</b>", visual:"hub", activeBranch:"institutional", layout:"split", imageSide:"left" },
-  { headline:"NetFlow Adviser", caption:"Relatively mass market relationship management with AFS Licensees and planners.<br> <b>Goal is to deepen and broaden product distribution including via platforms.</b>", visual:"hub", activeBranch:"adviser", layout:"split", imageSide:"right" },
+  { headline:"NetFlow Institutional", caption:"Source and bid for mandates from Institutional Investors and Super funds. <b>Manage mandate compliance and reporting.</b>", visual:"hub", activeBranch:"institutional", layout:"split", imageSide:"left" },
+  { headline:"NetFlow Adviser", caption:"Relatively mass market relationship management with AFS Licensees and planners.<b>Goal is to deepen and broaden product distribution including via platforms.</b>", visual:"hub", activeBranch:"adviser", layout:"split", imageSide:"right" },
   { headline:"NetFlow Private Capital", caption:"A system of record and investment administration for boutique non-unitised products, investors, borrowers and investee companies.", visual:"hub", activeBranch:"privatecapital", layout:"split", imageSide:"left" },
   { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform" },
   { headline:"NetFlow value prop for Salesforce", caption:"Unlocks for <b>Salesforce</b> by NetFlow", visual:"valuegrid" },
@@ -257,10 +268,10 @@ function buildMarketVisual(){
   const cards = items.map((it,i) => `
     <div class="seg-card" style="animation-delay:${0.18*i}s; flex:1; display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center;">
       <svg width="58" height="58" viewBox="-22 -22 44 44">
-        <circle class="seg-icon-circle" cx="0" cy="0" r="18" fill="none" stroke="var(--panel-border)" stroke-width="1.5"/>
+        <circle class="seg-icon-circle" cx="0" cy="0" r="18" fill="none" stroke="var(--panel-border)" stroke-width="1.5" style="animation-delay:${i*3}s;"/>
         ${ICONS[it.key]("var(--gold)")}
       </svg>
-      <div style="font-size:var(--fs-label); color:var(--ink-dim); line-height:1.3; max-width:130px;">${it.label}</div>
+      <div class="seg-card-label" style="font-size:var(--fs-label); color:var(--ink-dim); line-height:1.3; max-width:130px; animation-delay:${i*3}s;">${it.label}</div>
     </div>`).join("");
   return `<div style="display:flex; gap:22px; width:100%; height:100%; align-items:center; justify-content:center;">${cards}</div>`;
 }
