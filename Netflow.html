@@ -213,14 +213,22 @@ function buildMarketVisual(){
 }
 
 function buildHubVisual(activeBranch){
+  const ICONS = {
+    hni: (color) => `<circle cx="0" cy="-5" r="4" fill="none" stroke="${color}" stroke-width="1.6"/><path d="M-7,9 C-7,1 7,1 7,9" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round"/>`,
+    institutional: (color) => `<path d="M-9,9 L9,9 M-9,9 L-9,-1 L0,-9 L9,-1 L9,9 M-6,9 L-6,0 M-2,9 L-2,0 M2,9 L2,0 M6,9 L6,0" stroke="${color}" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    adviser: (color) => `<circle cx="-7" cy="6" r="2.4" fill="${color}"/><circle cx="7" cy="6" r="2.4" fill="${color}"/><circle cx="0" cy="-7" r="2.4" fill="${color}"/><line x1="-7" y1="6" x2="0" y2="-7" stroke="${color}" stroke-width="1.3"/><line x1="7" y1="6" x2="0" y2="-7" stroke="${color}" stroke-width="1.3"/>`,
+    privatecapital: (color) => `<rect x="-7" y="-2" width="14" height="11" rx="2" fill="none" stroke="${color}" stroke-width="1.5"/><path d="M-4,-2 v-3 a4,4 0 0 1 8,0 v3" fill="none" stroke="${color}" stroke-width="1.5"/><circle cx="0" cy="3.5" r="1.3" fill="${color}"/>`
+  };
   const nodesSvg = HUB_NODES.map((n,i) => {
     const isActive = activeBranch === n.id;
     const dim = activeBranch && !isActive;
     const r = isActive ? 28 : 20;
+    const iconColor = isActive ? 'var(--gold)' : 'var(--ink-dim)';
     return `
       <path class="hub-line ${isActive ? 'lit' : ''}" d="M175,50 C ${n.x < 175 ? n.x+40 : n.x-40},50 ${n.x},80 ${n.x},130" style="animation-delay:${0.15*i}s" opacity="${dim ? 0.22 : 1}"/>
       <g class="hub-node ${isActive ? 'active' : ''}" style="animation-delay:${0.35 + 0.1*i}s; opacity:${dim ? 0.3 : 1}">
         <circle class="node-ring" cx="${n.x}" cy="150" r="${r}" fill="${isActive ? 'rgba(201,166,103,0.15)' : 'var(--panel)'}" stroke="${isActive ? 'var(--gold)' : 'var(--panel-border)'}" stroke-width="${isActive ? 2 : 1.5}"/>
+        <g transform="translate(${n.x},150)">${ICONS[n.id](iconColor)}</g>
       </g>
       <text class="hub-node-label" x="${n.x}" y="195" text-anchor="middle" style="animation-delay:${0.55 + 0.1*i}s; font-size:13px; font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; fill:${isActive ? 'var(--gold)' : 'var(--ink-dim)'}; font-weight:${isActive ? 600 : 400};">${n.label}</text>`;
   }).join("");
@@ -237,43 +245,44 @@ function buildHubVisual(activeBranch){
 
 function buildPlatformVisual(){
   const chips = [
-    { label:"Financial Services Cloud", angle:-140 },
-    { label:"Sales Cloud", angle:-40 },
-    { label:"Data Cloud", angle:40 },
-    { label:"Agentforce", angle:140 }
+    { label:"Financial Services Cloud", angle:-135 },
+    { label:"Sales Cloud", angle:-45 },
+    { label:"Data Cloud", angle:45 },
+    { label:"Agentforce", angle:135 }
   ];
-  const R = 100;
+  const cx = 240, cy = 130, R = 155, coreR = 36;
   const chipEls = chips.map((c,i) => {
     const rad = c.angle * Math.PI / 180;
-    const x = 200 + R * Math.cos(rad);
-    const y = 105 + R * 0.55 * Math.sin(rad);
+    const x = cx + R * Math.cos(rad);
+    const y = cy + R * 0.68 * Math.sin(rad);
+    const w = Math.max(112, c.label.length * 7.4 + 36);
     return `
       <g class="orbit-chip" style="animation-delay:${0.5 + 0.12*i}s">
         <g class="orbit-chip-inner" style="animation-delay:${0.3*i}s">
-          <rect x="${x-62}" y="${y-17}" width="124" height="34" rx="17" fill="var(--panel)" stroke="var(--panel-border)" stroke-width="1.3"/>
+          <rect x="${x-w/2}" y="${y-17}" width="${w}" height="34" rx="17" fill="var(--panel)" stroke="var(--panel-border)" stroke-width="1.3"/>
           <text x="${x}" y="${y+5}" text-anchor="middle" style="font-size:12px; font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; fill:var(--ink-dim);">${c.label}</text>
         </g>
       </g>`;
   }).join("");
   return `
-    <svg viewBox="0 0 400 210" style="max-width:520px;">
-      <circle cx="200" cy="105" r="38" class="sf-core" fill="rgba(95,199,189,0.12)" stroke="var(--teal)" stroke-width="2"/>
-      <text x="200" y="100" text-anchor="middle" class="sf-core" style="font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:13px; fill:var(--ink); font-weight:600;">Salesforce</text>
-      <text x="200" y="117" text-anchor="middle" class="sf-core" style="font-size:10px; font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; fill:var(--ink-dim);">platform</text>
+    <svg viewBox="0 0 480 260" style="max-width:560px;">
+      <circle cx="${cx}" cy="${cy}" r="${coreR}" class="sf-core" fill="rgba(95,199,189,0.12)" stroke="var(--teal)" stroke-width="2"/>
+      <text x="${cx}" y="${cy-5}" text-anchor="middle" class="sf-core" style="font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:13px; fill:var(--ink); font-weight:600;">Salesforce</text>
+      <text x="${cx}" y="${cy+12}" text-anchor="middle" class="sf-core" style="font-size:10px; font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; fill:var(--ink-dim);">platform</text>
       ${chipEls}
     </svg>`;
 }
 
 function buildValueGridVisual(){
   const values = [
-    { t:"Reach under-served segments", icon:'<circle cx="0" cy="0" r="10" fill="none" stroke="var(--gold)" stroke-width="1.6"/><circle cx="0" cy="0" r="4" fill="var(--gold)"/>' },
-    { t:"Create cross-sell & upsell opportunities", icon:'<path d="M-8,4 L0,-8 L8,4" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' },
-    { t:"Re-engage with prospects", icon:'<path d="M-9,-6 A10,10 0 1 0 9,-6" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"/><polygon points="9,-11 9,-2 2,-6" fill="var(--gold)"/>' },
-    { t:"Revive closed-lost opportunities", icon:'<path d="M-9,0 A9,9 0 1 1 0,9" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"/><polygon points="-9,-4 -9,4 -3,0" fill="var(--gold)"/>' }
+    { t:"Reach under-served segments", icon:'<circle cx="12" cy="12" r="9" fill="none" stroke="var(--gold)" stroke-width="1.6"/><circle cx="12" cy="12" r="5" fill="none" stroke="var(--gold)" stroke-width="1.6"/><circle cx="12" cy="12" r="1.7" fill="var(--gold)"/>' },
+    { t:"Create cross-sell & upsell opportunities", icon:'<polyline points="3,17 10,10 14,14 21,5" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="15,5 21,5 21,11" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' },
+    { t:"Re-engage with prospects", icon:'<path d="M23 4v6h-6" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 20v-6h6" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' },
+    { t:"Revive closed-lost opportunities", icon:'<polygon points="13,2 3,14 12,14 11,22 21,10 12,10" fill="var(--gold)"/>' }
   ];
   const boxes = values.map((v,i) => `
     <div class="value-box" style="animation-delay:${0.15*i}s; background:var(--panel); border:1px solid var(--panel-border); border-radius:14px; padding:20px 16px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; width:160px;">
-      <svg class="value-box-icon" width="28" height="28" viewBox="-12 -12 24 24">${v.icon}</svg>
+      <svg class="value-box-icon" width="28" height="28" viewBox="0 0 24 24">${v.icon}</svg>
       <div style="font-size:13px; color:var(--ink-dim); line-height:1.35;">${v.t}</div>
     </div>`).join("");
   return `<div style="display:flex; flex-wrap:wrap; gap:16px; width:100%; align-items:center; justify-content:center;">${boxes}</div>`;
