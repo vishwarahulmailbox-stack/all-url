@@ -66,6 +66,31 @@
     transition: opacity 0.4s ease;
   }
   .stage.out{ opacity:0; }
+  .stage.wide{ max-width:min(1200px, 92vw); height:88vh; max-height:660px; }
+
+  /* ---- 40/60 split layout (screenshot + text), used by scenes 4-7 ---- */
+  .split-stage{
+    display:flex; align-items:stretch; gap:44px; width:100%; height:100%;
+    padding:0 12px;
+  }
+  .split-text{
+    flex:0 0 40%; max-width:40%; min-width:0; display:flex; flex-direction:column; justify-content:center;
+  }
+  .split-text .headline{ text-align:left; margin-bottom:26px; }
+  .split-text .caption{ text-align:left; max-width:100%; margin-top:0; }
+  .split-image{
+    flex:0 0 60%; max-width:60%; min-width:0; display:flex; align-items:stretch; justify-content:center;
+  }
+  .split-placeholder{
+    width:100%; height:100%; border:2px dashed var(--panel-border); border-radius:16px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    color:var(--ink-dim); background:rgba(28,29,31,0.015);
+    opacity:0; transform:translateY(14px);
+    animation: cardIn 0.55s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:0.25s;
+  }
+  .split-placeholder svg{ opacity:0.45; width:44px; height:44px; }
+  .split-placeholder .ph-label{ font-size:14px; font-weight:500; letter-spacing:0.02em; }
+  .split-placeholder .ph-sub{ font-size:11px; opacity:0.75; }
 
   .headline{
     font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-weight:500;
@@ -199,13 +224,13 @@ const HUB_NODES = [
 const scenes = [
   { headline:"", caption:"Built for <b>Wealth Management</b>", visual:"title" },
   { headline:"NetFlow target market", caption:"A combination some or all of the above which is very prevalent in the industry", visual:"market" },
-  { headline:"What is NetFlow?", caption:"NetFlow is a composable suite of <b>relationship management solutions</b>", visual:"composable" },
-  { headline:"NetFlow HNI", caption:"Deep relationships, <b>personalised service</b>", visual:"hub", activeBranch:"hni" },
-  { headline:"NetFlow Institutional", caption:"Win and manage <b>mandates</b>", visual:"hub", activeBranch:"institutional" },
-  { headline:"NetFlow Adviser", caption:"Broaden your <b>distribution</b>", visual:"hub", activeBranch:"adviser" },
-  { headline:"NetFlow Private Capital", caption:"System of record for <b>private markets</b>", visual:"hub", activeBranch:"privatecapital" },
+  { headline:"What is NetFlow?", caption:"NetFlow is a composable suite of <b>relationship management solutions</b>", visual:"composable", layout:"split", imageSide:"left" },
+  { headline:"NetFlow HNI", caption:"Manage close relationships with ultra high and high net worth investors including family offices, and their investment vehicles.<br> <b>Deliver highly personalised service.</b>", visual:"hub", activeBranch:"hni", layout:"split", imageSide:"right" },
+  { headline:"NetFlow Institutional", caption:"Source and bid for mandates from Institutional Investors and Super funds. <b>Manage mandate compliance and reporting.</b>", visual:"hub", activeBranch:"institutional", layout:"split", imageSide:"left" },
+  { headline:"NetFlow Adviser", caption:"Relatively mass market relationship management with AFS Licensees and planners.<b>Goal is to deepen and broaden product distribution including via platforms.</b>", visual:"hub", activeBranch:"adviser", layout:"split", imageSide:"right" },
+  { headline:"NetFlow Private Capital", caption:"A system of record and investment administration for boutique non-unitised products, investors, borrowers and investee companies.", visual:"hub", activeBranch:"privatecapital", layout:"split", imageSide:"left" },
   { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform" },
-  { headline:"Value prop for Salesforce", caption:"Unlocks for <b>Salesforce</b> by NetFlow", visual:"valuegrid" },
+  { headline:"NetFlow value prop for Salesforce", caption:"Unlocks for <b>Salesforce</b> by NetFlow", visual:"valuegrid" },
   { headline:"gonetflow.com", caption:"Contact <b>Atlas Consulting</b> — atlasconsulting.com.au", visual:"contact" }
 ];
 
@@ -270,6 +295,29 @@ function buildHubVisual(activeBranch){
         <text x="175" y="55" text-anchor="middle" style="font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:12px; fill:var(--ink); font-weight:600;">NetFlow</text>
       </g>
     </svg>`;
+}
+
+function buildComposableInline(){
+  /* smaller version of the puzzle graphic, sized to sit inside the 40% text column below the caption */
+  const overlays = [
+    { id:"hni", label:"HNI", top:"28%", left:"28%", scale:0.5 },
+    { id:"institutional", label:"Institutional", top:"28%", left:"72%", scale:0.32 },
+    { id:"privatecapital", label:"Private Capital", top:"72%", left:"72%", scale:0.32 },
+    { id:"adviser", label:"Adviser", top:"72%", left:"28%", scale:0.32 }
+  ];
+  const labelEls = overlays.map((o,i) => `
+    <div style="position:absolute; top:${o.top}; left:${o.left}; transform:translate(-50%,-50%);">
+      <div class="seg-card" style="animation-delay:${0.15*i}s; display:flex; flex-direction:column; align-items:center; gap:2px;">
+        <svg width="70" height="70" viewBox="-14 -14 28 28" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));"><g transform="scale(${o.scale})">${ICONS[o.id]("#FFFFFF")}</g></svg>
+        <div style="font-size:16px; font-weight:600; color:#FFFFFF; text-shadow:0 1px 2px rgba(0,0,0,0.4); letter-spacing:0.01em; white-space:nowrap;">${o.label}</div>
+      </div>
+    </div>`).join("");
+
+  return `
+    <div style="position:relative; width:400px; margin-top:28px;">
+      <img src="puzzle-four-parts.png" alt="Four connected puzzle pieces" style="width:100%; display:block; border-radius:8px;"/>
+      ${labelEls}
+    </div>`;
 }
 
 function buildComposableVisual(){
@@ -361,6 +409,30 @@ function buildVisual(s){
   return `<div class="visualzone">${inner}</div>`;
 }
 
+function buildImagePlaceholder(){
+  return `
+    <div class="split-image">
+      <div class="split-placeholder">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--ink-dim)" stroke-width="1.5"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5-4 4-3-3-5 5"/></svg>
+        <div class="ph-label">Screenshot placeholder</div>
+        <div class="ph-sub">fills 60% width · full stage height</div>
+      </div>
+    </div>`;
+}
+
+function buildSplitScene(s){
+  const extraVisual = s.visual === "composable" ? buildComposableInline() : "";
+  const textBlock = `
+    <div class="split-text">
+      <div class="headline">${s.headline}</div>
+      <div class="caption">${s.caption}</div>
+      ${extraVisual}
+    </div>`;
+  const imageBlock = buildImagePlaceholder();
+  const parts = s.imageSide === "left" ? [imageBlock, textBlock] : [textBlock, imageBlock];
+  return `<div class="split-stage">${parts.join("")}</div>`;
+}
+
 /* ---------- Render + manual navigation ---------- */
 const stage = document.getElementById('stage');
 const prevBtn = document.getElementById('prevBtn');
@@ -376,10 +448,15 @@ dotsWrap.innerHTML = scenes.map((_, i) => `<div class="dot" data-i="${i}"></div>
 const dotEls = [...dotsWrap.children];
 
 function renderScene(s){
-  stage.innerHTML = `
-    <div class="headline">${s.headline}</div>
-    ${buildVisual(s)}
-    <div class="caption">${s.caption}</div>`;
+  stage.classList.toggle('wide', s.layout === 'split');
+  if (s.layout === 'split') {
+    stage.innerHTML = buildSplitScene(s);
+  } else {
+    stage.innerHTML = `
+      <div class="headline">${s.headline}</div>
+      ${buildVisual(s)}
+      <div class="caption">${s.caption}</div>`;
+  }
 }
 
 function update(){
