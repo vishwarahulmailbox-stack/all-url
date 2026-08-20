@@ -331,14 +331,23 @@ const HUB_NODES = [
 
 const scenes = [
   { headline:"", caption:"Built for <b>Wealth Management</b>", visual:"title" },
-  { headline:"NetFlow target market", caption:"A combination some or all of the above which is very prevalent in the industry", visual:"market" },
-  { headline:"What is NetFlow?", caption:"NetFlow is a composable suite of <b>relationship management solutions</b>", visual:"composable", layout:"split", imageSide:"left", screenshot:"Screen 3.png", video:"Screen 3.mp4" },
-  { headline:"NetFlow HNI", caption:"Manage close relationships with ultra high and high net worth investors including family offices, and their investment vehicles.<br> <b>Deliver highly personalised service.</b>", visual:"hub", activeBranch:"hni", layout:"split", imageSide:"right", screenshot:"Screen 4.png", video:"Screen 4.mp4" },
-  { headline:"NetFlow Institutional", caption:"Source and bid for mandates from Institutional Investors and Super funds. <br> <b>Manage mandate compliance and reporting.</b>", visual:"hub", activeBranch:"institutional", layout:"split", imageSide:"left", screenshot:"Screen 5.png", video:"Screen 5.mp4" },
-  { headline:"NetFlow Adviser", caption:"Relatively mass market relationship management with AFS Licensees and planners.<br> <b>Goal is to deepen and broaden product distribution including via platforms.</b>", visual:"hub", activeBranch:"adviser", layout:"split", imageSide:"right", screenshot:"Screen 6.png", video:"Screen 6.mp4" },
-  { headline:"NetFlow Private Capital", caption:"A system of record and investment administration for boutique non-unitised products, investors, borrowers and investee companies.", visual:"hub", activeBranch:"privatecapital", layout:"split", imageSide:"left", screenshot:"Screen 7.png", video:"Screen 7.mp4" },
-  { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform", layout:"split", imageSide:"right", screenshot:"Screen 8.png", video:"Screen 8.mp4" },
-  { headline:"NetFlow value prop for Salesforce", caption:"", visual:"valuegrid", wide:true },
+  { headline:"NetFlow target market", caption:"A combination some or all of the above which is very prevalent in the industry", visual:"market", marketHighlight:0 },
+  { headline:"NetFlow target market", caption:"A combination some or all of the above which is very prevalent in the industry", visual:"market", marketHighlight:1 },
+  { headline:"NetFlow target market", caption:"A combination some or all of the above which is very prevalent in the industry", visual:"market", marketHighlight:2 },
+  { headline:"NetFlow target market", caption:"A combination some or all of the above which is very prevalent in the industry", visual:"market", marketHighlight:3 },
+  { headline:"What is NetFlow?", caption:"NetFlow is a composable suite of <b>relationship management solutions</b>", visual:"composable", layout:"split", imageSide:"left", screenshot:"Screen 3.png" },
+  { headline:"NetFlow HNI", caption:"Manage close relationships with ultra high and high net worth investors including family offices, and their investment vehicles.<br> <b>Deliver highly personalised service.</b>", visual:"hub", activeBranch:"hni", layout:"split", imageSide:"right", screenshot:"Screen 4.png" },
+  { headline:"NetFlow Institutional", caption:"Source and bid for mandates from Institutional Investors and Super funds. <br> <b>Manage mandate compliance and reporting.</b>", visual:"hub", activeBranch:"institutional", layout:"split", imageSide:"left", screenshot:"Screen 5.png" },
+  { headline:"NetFlow Adviser", caption:"Relatively mass market relationship management with AFS Licensees and planners.<br> <b>Goal is to deepen and broaden product distribution including via platforms.</b>", visual:"hub", activeBranch:"adviser", layout:"split", imageSide:"right", screenshot:"Screen 6.png" },
+  { headline:"NetFlow Private Capital", caption:"A system of record and investment administration for boutique non-unitised products, investors, borrowers and investee companies.", visual:"hub", activeBranch:"privatecapital", layout:"split", imageSide:"left", screenshot:"Screen 7.png" },
+  { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform", layout:"split", imageSide:"right", screenshot:"Screen 11.png", platformHighlight:0 },
+  { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform", layout:"split", imageSide:"right", screenshot:"Screen 12.png", platformHighlight:1 },
+  { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform", layout:"split", imageSide:"right", screenshot:"Screen 13.png", platformHighlight:2 },
+  { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform", layout:"split", imageSide:"right", screenshot:"Screen 14.png", platformHighlight:3 },
+  { headline:"NetFlow value prop for Salesforce", caption:"", visual:"valuegrid", wide:true, valueHighlight:0 },
+  { headline:"NetFlow value prop for Salesforce", caption:"", visual:"valuegrid", wide:true, valueHighlight:1 },
+  { headline:"NetFlow value prop for Salesforce", caption:"", visual:"valuegrid", wide:true, valueHighlight:2 },
+  { headline:"NetFlow value prop for Salesforce", caption:"", visual:"valuegrid", wide:true, valueHighlight:3 },
   { headline:"gonetflow.com", caption:"Contact <b>Atlas Consulting</b> — atlasconsulting.com.au", visual:"contact" }
 ];
 
@@ -353,23 +362,33 @@ function buildTitleVisual(){
     <div style="position:relative; font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:var(--fs-hero); font-weight:600; color:var(--ink);">${letters}</div>`;
 }
 
-function buildMarketVisual(){
+function buildMarketVisual(highlightIndex){
   /* reuses the same iconography as the later "hub" scenes (HNI / Institutional /
-     Adviser / Private Capital) so the four segments read consistently throughout */
+     Adviser / Private Capital) so the four segments read consistently throughout.
+     highlightIndex: which of the 4 items is statically spotlighted on this screen. */
   const items = [
     { label:"Asset managers catering to High Networth Investors", key:"hni" },
     { label:"Asset managers in the Institutional investor market", key:"institutional" },
     { label:"Fund managers and product manufacturers driving distribution", key:"adviser" },
     { label:"Asset managers specialising in private credit or private equity space", key:"privatecapital" }
   ];
-  const cards = items.map((it,i) => `
+  const cards = items.map((it,i) => {
+    const isActive = i === highlightIndex;
+    const circleStyle = isActive
+      ? "animation:none; stroke:var(--gold); stroke-width:2.5px; filter:drop-shadow(0 0 7px rgba(169,122,56,0.55)); transform:scale(1.08);"
+      : "animation:none; stroke:var(--panel-border); stroke-width:1.5px;";
+    const labelStyle = isActive
+      ? "animation:none; color:var(--gold); font-weight:600;"
+      : "animation:none; color:var(--ink-dim); font-weight:400;";
+    return `
     <div class="seg-card" style="animation-delay:${0.18*i}s; flex:1; display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center;">
       <svg width="58" height="58" viewBox="-22 -22 44 44">
-        <circle class="seg-icon-circle" cx="0" cy="0" r="18" fill="none" stroke="var(--panel-border)" stroke-width="1.5" style="animation-delay:calc(var(--highlight-item-time) * ${i});"/>
+        <circle class="seg-icon-circle" cx="0" cy="0" r="18" fill="none" style="${circleStyle}"/>
         ${ICONS[it.key]("var(--gold)")}
       </svg>
-      <div class="seg-card-label" style="font-size:var(--fs-label); color:var(--ink-dim); line-height:1.3; max-width:130px; animation-delay:calc(var(--highlight-item-time) * ${i});">${it.label}</div>
-    </div>`).join("");
+      <div class="seg-card-label" style="font-size:var(--fs-label); max-width:130px; line-height:1.3; ${labelStyle}">${it.label}</div>
+    </div>`;
+  }).join("");
   return `<div style="display:flex; gap:22px; width:100%; height:100%; align-items:center; justify-content:center;">${cards}</div>`;
 }
 
@@ -480,18 +499,27 @@ function buildPlatformVisual(){
     </svg>`;
 }
 
-function buildValueGridVisual(){
+function buildValueGridVisual(highlightIndex){
   const values = [
     { t:"Reach under-served segments", icon:'<circle cx="12" cy="12" r="9" fill="none" stroke="var(--gold)" stroke-width="1.6"/><circle cx="12" cy="12" r="5" fill="none" stroke="var(--gold)" stroke-width="1.6"/><circle cx="12" cy="12" r="1.7" fill="var(--gold)"/>' },
     { t:"Create cross-sell & upsell opportunities", icon:'<polyline points="3,17 10,10 14,14 21,5" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="15,5 21,5 21,11" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' },
     { t:"Re-engage with prospects", icon:'<path d="M23 4v6h-6" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 20v-6h6" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' },
     { t:"Revive closed-lost opportunities", icon:'<polygon points="13,2 3,14 12,14 11,22 21,10 12,10" fill="var(--gold)"/>' }
   ];
-  const boxes = values.map((v,i) => `
-    <div class="value-box" style="animation-delay:${0.15*i}s, calc(var(--highlight-item-time) * ${i}); background:var(--panel); border:1.5px solid var(--panel-border); border-radius:16px; padding:32px 24px; display:flex; flex-direction:column; align-items:center; gap:18px; text-align:center; flex:1; min-width:0;">
+  const boxes = values.map((v,i) => {
+    const isActive = i === highlightIndex;
+    const boxExtra = isActive
+      ? "border-color:var(--gold); box-shadow:0 14px 30px rgba(169,122,56,0.22);"
+      : "";
+    const labelExtra = isActive
+      ? "color:var(--gold); font-weight:600;"
+      : "color:var(--ink-dim); font-weight:400;";
+    return `
+    <div class="value-box" style="animation:cardIn 0.55s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:${0.15*i}s; background:var(--panel); border:1.5px solid var(--panel-border); border-radius:16px; padding:32px 24px; display:flex; flex-direction:column; align-items:center; gap:18px; text-align:center; flex:1; min-width:0; ${boxExtra}">
       <svg class="value-box-icon" width="36" height="36" viewBox="0 0 24 24">${v.icon}</svg>
-      <div class="value-box-label" style="font-size:17px; color:var(--ink-dim); line-height:1.4; animation-delay:calc(var(--highlight-item-time) * ${i});">${v.t}</div>
-    </div>`).join("");
+      <div class="value-box-label" style="font-size:17px; line-height:1.4; animation:none; ${labelExtra}">${v.t}</div>
+    </div>`;
+  }).join("");
   return `<div style="display:flex; gap:22px; width:95%; align-items:stretch; justify-content:center;">${boxes}</div>`;
 }
 
@@ -508,11 +536,11 @@ function buildContactVisual(){
 function buildVisual(s){
   let inner = "";
   if (s.visual === "title") inner = buildTitleVisual();
-  else if (s.visual === "market") inner = buildMarketVisual();
+  else if (s.visual === "market") inner = buildMarketVisual(s.marketHighlight);
   else if (s.visual === "hub") inner = buildHubVisual(s.activeBranch);
   else if (s.visual === "composable") inner = buildComposableVisual();
   else if (s.visual === "platform") inner = buildPlatformVisual();
-  else if (s.visual === "valuegrid") inner = buildValueGridVisual();
+  else if (s.visual === "valuegrid") inner = buildValueGridVisual(s.valueHighlight);
   else if (s.visual === "contact") inner = buildContactVisual();
   return `<div class="visualzone">${inner}</div>`;
 }
@@ -560,15 +588,22 @@ function buildPlatformTreeBlock(){
     </div>`;
 }
 
-function buildPlatformTreeInline(){
-  /* compact vertical tree that sits inside the 30% text column, below the caption */
+function buildPlatformTreeInline(highlightIndex){
+  /* compact vertical tree that sits inside the 30% text column, below the caption.
+     highlightIndex: which branch is statically spotlighted on this screen. */
   const children = ["Agentforce Financial Services", "Agentforce Sales", "Tableau", "Agentforce"];
-  const rows = children.map((label,i) => `
-    <div class="tree-stem-v" style="animation-delay:calc(0.55s + var(--highlight-item-time) * ${i});"></div>
+  const rows = children.map((label,i) => {
+    const isActive = i === highlightIndex;
+    const boxExtra = isActive
+      ? "border-color:var(--gold); color:var(--gold); font-weight:700; box-shadow:0 8px 20px rgba(169,122,56,0.25);"
+      : "";
+    return `
+    <div class="tree-stem-v" style="animation-delay:${0.55 + 0.15*i}s;"></div>
     <div class="tree-row-v">
-      <div class="tree-elbow-v" style="animation-delay:calc(0.62s + var(--highlight-item-time) * ${i});"></div>
-      <div class="tree-child-box-v" style="animation-delay:calc(0.68s + var(--highlight-item-time) * ${i});">${label}</div>
-    </div>`).join("");
+      <div class="tree-elbow-v" style="animation-delay:${0.62 + 0.15*i}s;"></div>
+      <div class="tree-child-box-v" style="animation-delay:${0.68 + 0.15*i}s; ${boxExtra}">${label}</div>
+    </div>`;
+  }).join("");
   return `
     <div class="platform-tree-v">
       <div class="tree-root-box-v">Salesforce Platform</div>
@@ -579,7 +614,7 @@ function buildPlatformTreeInline(){
 function buildSplitScene(s){
   let extraVisual = "";
   if (s.visual === "composable") extraVisual = buildComposableInline();
-  else if (s.visual === "platform") extraVisual = buildPlatformTreeInline();
+  else if (s.visual === "platform") extraVisual = buildPlatformTreeInline(s.platformHighlight);
   const textBlock = `
     <div class="split-text">
       <div class="headline">${s.headline}</div>
@@ -604,6 +639,22 @@ let current = 0;
 countTotal.textContent = String(scenes.length).padStart(2, '0');
 dotsWrap.innerHTML = scenes.map((_, i) => `<div class="dot" data-i="${i}"></div>`).join('');
 const dotEls = [...dotsWrap.children];
+
+/* ---- deep-linking: #5 or ?screen=5 in the URL jumps straight to screen 5 on load,
+   and the URL updates as you navigate so reloading/sharing keeps your place ---- */
+function sceneFromURL(){
+  const hash = window.location.hash.replace('#', '');
+  const params = new URLSearchParams(window.location.search);
+  const raw = hash || params.get('screen');
+  const n = parseInt(raw, 10);
+  if (!isNaN(n) && n >= 1 && n <= scenes.length) return n - 1;
+  return 0;
+}
+function syncURL(){
+  const newHash = '#' + (current + 1);
+  if (window.location.hash !== newHash) history.replaceState(null, '', newHash);
+}
+current = sceneFromURL();
 
 function renderScene(s){
   stage.classList.toggle('wide', s.layout === 'split' || s.wide === true);
@@ -630,6 +681,7 @@ function update(){
   nextBtn.innerHTML = current === scenes.length - 1 ? restartIcon : nextIcon;
   nextBtn.setAttribute('aria-label', current === scenes.length - 1 ? 'Restart' : 'Next');
   dotEls.forEach((d, i) => d.classList.toggle('active', i === current));
+  syncURL();
 }
 
 function goTo(i){
@@ -645,6 +697,10 @@ dotEls.forEach(d => d.addEventListener('click', () => goTo(parseInt(d.dataset.i)
 document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight') nextBtn.click();
   if (e.key === 'ArrowLeft') prevBtn.click();
+});
+window.addEventListener('hashchange', () => {
+  const n = sceneFromURL();
+  if (n !== current) { current = n; update(); }
 });
 
 update();
