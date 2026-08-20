@@ -97,6 +97,16 @@
     opacity:0; transform:translateY(14px);
     animation: cardIn 0.55s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:0.25s;
   }
+  .split-video-wrap{
+    width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, #f4f0ea, #eae4da); border:1px solid var(--panel-border); border-radius:20px;
+    padding:16px; box-shadow:0 14px 34px rgba(28,29,31,0.10);
+    opacity:0; transform:translateY(14px);
+    animation: cardIn 0.55s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:0.25s;
+  }
+  .split-video{
+    width:100%; height:100%; object-fit:contain; border-radius:12px; display:block;
+  }
 
   .headline{
     font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-weight:500;
@@ -125,11 +135,13 @@
   .caption b{ color:var(--gold); font-weight:600; }
 
   .watermark{
+    display:none;
     position:fixed; top:24px; left:28px; z-index:2;
     font-family:'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:13px; letter-spacing:0.05em;
     color:rgba(28,29,31,0.32);
   }
   .scenecount{
+    display:none;
     position:fixed; top:24px; right:28px; z-index:2;
     font-size:12px; color:var(--ink-dim); font-variant-numeric:tabular-nums; letter-spacing:0.03em;
   }
@@ -138,7 +150,7 @@
   /* ---- bottom-right nav: two small circular icon buttons ---- */
   .chrome{
     position:fixed; right:20px; bottom:20px; z-index:5;
-    display:flex; align-items:center; gap:8px;
+    display:none; align-items:center; gap:8px;
   }
   .dots{ display:none; }
 
@@ -254,8 +266,21 @@
   }
   @keyframes treeDropIn{ to{ opacity:1; transform:translateY(0); } }
 
-  .value-box{ opacity:0; transform:translateY(16px); animation: cardIn 0.55s cubic-bezier(.2,.7,.2,1) forwards; }
+  .value-box{
+    opacity:0; transform:translateY(16px);
+    animation: cardIn 0.55s cubic-bezier(.2,.7,.2,1) forwards, valueBoxHighlight 12s ease-in-out infinite;
+  }
   .value-box-icon{ animation: pulseRing 2.6s ease-in-out infinite; transform-origin:center; }
+  .visualzone .value-box-icon{ width:36px !important; height:36px !important; }
+  @keyframes valueBoxHighlight{
+    0%, 22%{ border-color:var(--gold); box-shadow:0 14px 30px rgba(169,122,56,0.22); }
+    28%, 100%{ border-color:var(--panel-border); box-shadow:none; }
+  }
+  .value-box-label{ animation:valueLabelHighlight 12s ease-in-out infinite; }
+  @keyframes valueLabelHighlight{
+    0%, 22%{ color:var(--gold); font-weight:600; }
+    28%, 100%{ color:var(--ink-dim); font-weight:400; }
+  }
 
   .assemble-letter{ opacity:0; animation: assembleIn 0.6s cubic-bezier(.2,.7,.2,1) forwards; }
   @keyframes assembleIn{ from{ opacity:0; transform:translateY(-14px) scale(0.9);} to{ opacity:1; transform:translateY(0) scale(1);} }
@@ -302,13 +327,13 @@ const HUB_NODES = [
 const scenes = [
   { headline:"", caption:"Built for <b>Wealth Management</b>", visual:"title" },
   { headline:"NetFlow target market", caption:"A combination some or all of the above which is very prevalent in the industry", visual:"market" },
-  { headline:"What is NetFlow?", caption:"NetFlow is a composable suite of <b>relationship management solutions</b>", visual:"composable", layout:"split", imageSide:"left", screenshot:"Screen 3.png" },
-  { headline:"NetFlow HNI", caption:"Manage close relationships with ultra high and high net worth investors including family offices, and their investment vehicles.<br> <b>Deliver highly personalised service.</b>", visual:"hub", activeBranch:"hni", layout:"split", imageSide:"right", screenshot:"Screen 4.png" },
-  { headline:"NetFlow Institutional", caption:"Source and bid for mandates from Institutional Investors and Super funds. <br> <b>Manage mandate compliance and reporting.</b>", visual:"hub", activeBranch:"institutional", layout:"split", imageSide:"left", screenshot:"Screen 5.png" },
-  { headline:"NetFlow Adviser", caption:"Relatively mass market relationship management with AFS Licensees and planners.<br> <b>Goal is to deepen and broaden product distribution including via platforms.</b>", visual:"hub", activeBranch:"adviser", layout:"split", imageSide:"right", screenshot:"Screen 6.png" },
-  { headline:"NetFlow Private Capital", caption:"A system of record and investment administration for boutique non-unitised products, investors, borrowers and investee companies.", visual:"hub", activeBranch:"privatecapital", layout:"split", imageSide:"left", screenshot:"Screen 7.png" },
-  { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform", layout:"split", imageSide:"right", screenshot:"Screen 8.png" },
-  { headline:"NetFlow value prop for Salesforce", caption:"Unlocks for <b>Salesforce</b> by NetFlow", visual:"valuegrid", wide:true },
+  { headline:"What is NetFlow?", caption:"NetFlow is a composable suite of <b>relationship management solutions</b>", visual:"composable", layout:"split", imageSide:"left", screenshot:"Screen 3.png", video:"Screen 3.mp4" },
+  { headline:"NetFlow HNI", caption:"Manage close relationships with ultra high and high net worth investors including family offices, and their investment vehicles.<br> <b>Deliver highly personalised service.</b>", visual:"hub", activeBranch:"hni", layout:"split", imageSide:"right", screenshot:"Screen 4.png", video:"Screen 4.mp4" },
+  { headline:"NetFlow Institutional", caption:"Source and bid for mandates from Institutional Investors and Super funds. <br> <b>Manage mandate compliance and reporting.</b>", visual:"hub", activeBranch:"institutional", layout:"split", imageSide:"left", screenshot:"Screen 5.png", video:"Screen 5.mp4" },
+  { headline:"NetFlow Adviser", caption:"Relatively mass market relationship management with AFS Licensees and planners.<br> <b>Goal is to deepen and broaden product distribution including via platforms.</b>", visual:"hub", activeBranch:"adviser", layout:"split", imageSide:"right", screenshot:"Screen 6.png", video:"Screen 6.mp4" },
+  { headline:"NetFlow Private Capital", caption:"A system of record and investment administration for boutique non-unitised products, investors, borrowers and investee companies.", visual:"hub", activeBranch:"privatecapital", layout:"split", imageSide:"left", screenshot:"Screen 7.png", video:"Screen 7.mp4" },
+  { headline:"NetFlow with Salesforce", caption:"NetFlow is built on <b>Salesforce platform</b>", visual:"platform", layout:"split", imageSide:"right", screenshot:"Screen 8.png", video:"Screen 8.mp4" },
+  { headline:"NetFlow value prop for Salesforce", caption:"", visual:"valuegrid", wide:true },
   { headline:"gonetflow.com", caption:"Contact <b>Atlas Consulting</b> — atlasconsulting.com.au", visual:"contact" }
 ];
 
@@ -458,11 +483,11 @@ function buildValueGridVisual(){
     { t:"Revive closed-lost opportunities", icon:'<polygon points="13,2 3,14 12,14 11,22 21,10 12,10" fill="var(--gold)"/>' }
   ];
   const boxes = values.map((v,i) => `
-    <div class="value-box" style="animation-delay:${0.15*i}s; background:var(--panel); border:1px solid var(--panel-border); border-radius:14px; padding:20px 16px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; width:160px;">
-      <svg class="value-box-icon" width="28" height="28" viewBox="0 0 24 24">${v.icon}</svg>
-      <div style="font-size:var(--fs-label); color:var(--ink-dim); line-height:1.35;">${v.t}</div>
+    <div class="value-box" style="animation-delay:${0.15*i}s, ${i*3}s; background:var(--panel); border:1.5px solid var(--panel-border); border-radius:16px; padding:32px 24px; display:flex; flex-direction:column; align-items:center; gap:18px; text-align:center; flex:1; min-width:0;">
+      <svg class="value-box-icon" width="36" height="36" viewBox="0 0 24 24">${v.icon}</svg>
+      <div class="value-box-label" style="font-size:17px; color:var(--ink-dim); line-height:1.4; animation-delay:${i*3}s;">${v.t}</div>
     </div>`).join("");
-  return `<div style="display:flex; flex-wrap:wrap; gap:16px; width:100%; align-items:center; justify-content:center;">${boxes}</div>`;
+  return `<div style="display:flex; gap:22px; width:95%; align-items:stretch; justify-content:center;">${boxes}</div>`;
 }
 
 function buildContactVisual(){
@@ -488,6 +513,14 @@ function buildVisual(s){
 }
 
 function buildImagePlaceholder(s){
+  if (s && s.video) {
+    return `
+    <div class="split-image">
+      <div class="split-video-wrap">
+        <video class="split-video" src="${s.video}" autoplay loop muted playsinline></video>
+      </div>
+    </div>`;
+  }
   if (s && s.screenshot) {
     return `
     <div class="split-image">
@@ -577,6 +610,9 @@ function renderScene(s){
       ${buildVisual(s)}
       <div class="caption">${s.caption}</div>`;
   }
+  /* dynamically-inserted <video autoplay> isn't always honored by the browser — force it */
+  const vid = stage.querySelector('.split-video');
+  if (vid) { vid.play().catch(()=>{}); }
 }
 
 function update(){
