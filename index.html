@@ -182,6 +182,10 @@
   /* ---- screen 2: cycle the spotlight through each circle, looping. Speed comes from
      --highlight-item-time (4 circles per full cycle). ---- */
   .seg-icon-circle{ transform-box:fill-box; transform-origin:center; animation: segHighlight calc(var(--highlight-item-time) * 4) ease-in-out infinite; }
+  @keyframes marketActivePulse{
+    0%, 100%{ stroke-width:2.5px; transform:scale(1.08); filter:drop-shadow(0 0 7px rgba(169,122,56,0.55)); }
+    50%{ stroke-width:2.8px; transform:scale(1.15); filter:drop-shadow(0 0 15px rgba(169,122,56,0.8)); }
+  }
   @keyframes segHighlight{
     0%, 22%{ stroke:var(--gold); stroke-width:2.5px; filter:drop-shadow(0 0 7px rgba(169,122,56,0.55)); transform:scale(1.08); }
     28%, 100%{ stroke:var(--panel-border); stroke-width:1.5px; filter:none; transform:scale(1); }
@@ -370,12 +374,12 @@ function buildMarketVisual(highlightIndex){
     { label:"Asset managers catering to High Networth Investors", key:"hni" },
     { label:"Asset managers in the Institutional investor market", key:"institutional" },
     { label:"Fund managers and product manufacturers driving distribution", key:"adviser" },
-    { label:"Asset managers specialising in private credit or private equity space", key:"privatecapital" }
+    { label:"Asset managers specialising in private capital space", key:"privatecapital" }
   ];
   const cards = items.map((it,i) => {
     const isActive = i === highlightIndex;
     const circleStyle = isActive
-      ? "animation:none; stroke:var(--gold); stroke-width:2.5px; filter:drop-shadow(0 0 7px rgba(169,122,56,0.55)); transform:scale(1.08);"
+      ? "animation: marketActivePulse 2.2s ease-in-out infinite; stroke:var(--gold); stroke-width:2.5px;"
       : "animation:none; stroke:var(--panel-border); stroke-width:1.5px;";
     const labelStyle = isActive
       ? "animation:none; color:var(--gold); font-weight:600;"
@@ -501,10 +505,10 @@ function buildPlatformVisual(){
 
 function buildValueGridVisual(highlightIndex){
   const values = [
-    { t:"Reach under-served segments", icon:'<circle cx="12" cy="12" r="9" fill="none" stroke="var(--gold)" stroke-width="1.6"/><circle cx="12" cy="12" r="5" fill="none" stroke="var(--gold)" stroke-width="1.6"/><circle cx="12" cy="12" r="1.7" fill="var(--gold)"/>' },
-    { t:"Create cross-sell & upsell opportunities", icon:'<polyline points="3,17 10,10 14,14 21,5" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="15,5 21,5 21,11" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' },
+    { t:"Tap un-serviced or under-serviced market segments", icon:'<circle cx="12" cy="12" r="9" fill="none" stroke="var(--gold)" stroke-width="1.6"/><circle cx="12" cy="12" r="5" fill="none" stroke="var(--gold)" stroke-width="1.6"/><circle cx="12" cy="12" r="1.7" fill="var(--gold)"/>' },
+    { t:"Create cross-sell or upsell opportunities", icon:'<polyline points="3,17 10,10 14,14 21,5" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="15,5 21,5 21,11" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' },
     { t:"Re-engage with prospects", icon:'<path d="M23 4v6h-6" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 20v-6h6" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' },
-    { t:"Revive closed-lost opportunities", icon:'<polygon points="13,2 3,14 12,14 11,22 21,10 12,10" fill="var(--gold)"/>' }
+    { t:"Potentially rework closed-lost opportunities", icon:'<polygon points="13,2 3,14 12,14 11,22 21,10 12,10" fill="var(--gold)"/>' }
   ];
   const boxes = values.map((v,i) => {
     const isActive = i === highlightIndex;
