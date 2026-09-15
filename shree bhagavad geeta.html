@@ -159,6 +159,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
   color:#4a3827;cursor:pointer;font:12px system-ui
 }
 .action.active{background:#f0dfb8}
+.auto-on{background:#d9b45b!important;color:#24170e!important}
 
 .loader{position:absolute;inset:0;background:rgba(255,250,240,.9);z-index:10;display:grid;place-items:center}
 .loader.hide{display:none}
@@ -249,6 +250,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
       <button class="action" id="speakShloka">🔊 श्लोक पढ़ें</button>
       <button class="action" id="speakVyakhya">🔊 व्याख्या पढ़ें</button>
       <button class="action" id="stopSpeak">■ रोकें</button>
+      <button class="action" id="autoRead">▶ Auto Read</button>
       <button class="action" id="bookmark">☆ Bookmark</button>
       <button class="action" id="copy">⧉ Copy</button>
     </div>
@@ -512,63 +514,33 @@ $("font").onclick=()=>{
 
 function cleanForSpeech(text){
  return String(text||"")
-   // ।।1.2।। / ॥ 1.2 ॥ जैसे verse-number prefixes हटाएँ (हर जगह से, सिर्फ़ शुरुआत में नहीं)
-   .replace(/[।॥]{1,2}\s*\d{1,2}[.:]\d{1,3}\s*[।॥]{1,2}/gu,"")
-   .replace(/^\s*(?:श्लोक\s*)?(?:\d{1,2}[.:]\d{1,3})[\s—–-]*/i,"")
-   .replace(/^\s*(?:verse\s*)?\d{1,2}[.:]\d{1,3}[\s—–-]*/i,"")
+   // श्लोक संख्या/मार्कर जैसे ||१-५||, ॥१-५॥, ||1-5|| और 1.5 speech से हटाएँ
+   .replace(/(?:\|\||॥|।।)\s*[०-९\d]{1,3}\s*[-–—:]\s*[०-९\d]{1,3}\s*(?:\|\||॥|।।)/gu,"")
+   .replace(/(?:\|\||॥|।।)\s*[०-९\d]{1,3}[.:]\s*[०-९\d]{1,3}\s*(?:\|\||॥|।।)/gu,"")
+   .replace(/(?:\|\||॥|।।)\s*[०-९\d]{1,3}\s*(?:\|\||॥|।।)/gu,"")
+   .replace(/^\s*(?:श्लोक\s*)?(?:[०-९\d]{1,3}[.:][०-९\d]{1,3})[\s—–-]*/iu,"")
+   .replace(/^\s*(?:verse\s*)?\d{1,3}[.:]\d{1,3}[\s—–-]*/i,"")
    .replace(/\s{2,}/g," ")
    .trim();
 }
 
 let cachedVoices=[];
-function loadVoices(){
- return new Promise(resolve=>{
-  const v=speechSynthesis.getVoices();
-  if(v && v.length){cachedVoices=v;resolve(v);return}
-  const t=setTimeout(()=>resolve(cachedVoices),1200);
-  speechSynthesis.onvoiceschanged=()=>{
-   clearTimeout(t);
-   cachedVoices=speechSynthesis.getVoices();
-   resolve(cachedVoices);
-  };
- });
-}
-function pickVoice(voices,lang){
- const p=lang.slice(0,2).toLowerCase();
- return voices.find(x=>x.lang?.toLowerCase()===lang.toLowerCase())
-   || voices.find(x=>x.lang?.toLowerCase().startsWith(p));
-}
-function setSpeakingUI(id,on){
- ["speakShloka","speakVyakhya"].forEach(bid=>{
-  if(bid===id)$(bid).classList.toggle("active",on);
-  $(bid).disabled=on&&bid!==id?true:false;
- });
-}
-async function speakText(text,lang,btnId){
- if(!("speechSynthesis" in window)){toast("इस browser में voice उपलब्ध नहीं");return}
- const clean=cleanForSpeech(text);
- if(!clean){toast("पढ़ने के लिए टेक्स्ट उपलब्ध नहीं");return}
- speechSynthesis.cancel();
- const voices=await loadVoices();
- // Sanskrit voices लगभग किसी भी browser में नहीं होतीं, इसलिए Hindi voice पर fallback करते हैं
- let voice=pickVoice(voices,lang);
- if(!voice&&lang==="sa-IN")voice=pickVoice(voices,"hi-IN");
- const u=new SpeechSynthesisUtterance(clean);
- u.lang=voice?voice.lang:(lang==="sa-IN"?"hi-IN":lang);
- if(voice)u.voice=voice;
- u.rate=lang==="sa-IN"?.72:.86;
- u.onstart=()=>setSpeakingUI(btnId,true);
- u.onend=()=>setSpeakingUI(btnId,false);
- u.onerror=()=>{setSpeakingUI(btnId,false);toast("पढ़ने में समस्या आई, दोबारा try करें")};
- speechSynthesis.speak(u);
-}
+let currentUtterance=null;
+let autoRead=false;
+let speechGeneration=0;
+function loadVoices(){return new Promise(resolve=>{const v=speechSynthesis.getVoices();if(v&&v.length){cachedVoices=v;resolve(v);return}const t=setTimeout(()=>resolve(cachedVoices),1200);speechSynthesis.onvoiceschanged=()=>{clearTimeout(t);cachedVoices=speechSynthesis.getVoices();resolve(cachedVoices)}})}
+function pickVoice(voices,lang){const p=lang.slice(0,2).toLowerCase();return voices.find(x=>x.lang?.toLowerCase()===lang.toLowerCase())||voices.find(x=>x.lang?.toLowerCase().startsWith(p))}
+function pickMaleVoice(voices){const a=voices.filter(x=>x.lang?.toLowerCase().startsWith("hi"));return a.find(x=>/male|ravi|madhur|hemant|aditya|prabhat|amit|gopal|raj|veer|arjun|dev/i.test(x.name||""))||pickVoice(voices,"hi-IN")||a[0]}
+function pickFemaleVoice(voices){const a=voices.filter(x=>x.lang?.toLowerCase().startsWith("hi"));return a.find(x=>/female|neerja|swara|heera|kalpana|veena|lekha|sangeeta|priya|richa|pooja|ananya/i.test(x.name||""))||pickVoice(voices,"hi-IN")||a[0]}
+function setSpeakingUI(id,on){["speakShloka","speakVyakhya"].forEach(b=>{$(b).classList.toggle("active",on&&b===id);$(b).disabled=on&&b!==id})}
+function stopSpeech(){speechGeneration++;if("speechSynthesis"in window)speechSynthesis.cancel();currentUtterance=null;setSpeakingUI(null,false)}
+async function speakText(text,lang,btnId){if(!("speechSynthesis"in window)){toast("इस browser में voice उपलब्ध नहीं");return}const clean=cleanForSpeech(text);if(!clean){toast("पढ़ने के लिए टेक्स्ट उपलब्ध नहीं");return}stopSpeech();const g=speechGeneration;const voices=await loadVoices();const voice=lang==="sa-IN"?pickMaleVoice(voices):pickFemaleVoice(voices);const u=new SpeechSynthesisUtterance(clean);u.lang=voice?.lang||"hi-IN";if(voice)u.voice=voice;u.rate=lang==="sa-IN"?.68:.78;u.pitch=lang==="sa-IN"?.88:1.04;u.onstart=()=>g===speechGeneration&&setSpeakingUI(btnId,true);u.onend=()=>g===speechGeneration&&setSpeakingUI(btnId,false);u.onerror=()=>g===speechGeneration&&(setSpeakingUI(null,false),toast("पढ़ने में समस्या आई, दोबारा try करें"));currentUtterance=u;speechSynthesis.speak(u)}
+function readCurrentPage(){if(!autoRead)return;stopSpeech();loadVoices().then(voices=>{if(!autoRead)return;const male=pickMaleVoice(voices),female=pickFemaleVoice(voices),g=speechGeneration;const a=new SpeechSynthesisUtterance(cleanForSpeech($("verse").textContent)),b=new SpeechSynthesisUtterance(cleanForSpeech($("explain").textContent));[a,b].forEach((u,i)=>{const voice=i?female:male;u.lang=voice?.lang||"hi-IN";if(voice)u.voice=voice;u.rate=i?.78:.68;u.pitch=i?1.04:.88});a.onstart=()=>setSpeakingUI("speakShloka",true);a.onend=()=>{setSpeakingUI(null,false);if(g===speechGeneration&&autoRead)speechSynthesis.speak(b)};b.onstart=()=>setSpeakingUI("speakVyakhya",true);b.onend=()=>{setSpeakingUI(null,false);if(g===speechGeneration&&autoRead)setTimeout(nextAutoPage,1000)};a.onerror=b.onerror=()=>setSpeakingUI(null,false);currentUtterance=a;speechSynthesis.speak(a)})}
+function nextAutoPage(){if(!autoRead)return;if(v<chapters[ch-1][2]){show(ch,v+1,1);setTimeout(()=>{if(autoRead)readCurrentPage()},1050)}else if(ch<18){show(ch+1,1,1);setTimeout(()=>{if(autoRead)readCurrentPage()},1050)}else{autoRead=false;$("autoRead").classList.remove("auto-on");$("autoRead").textContent="▶ Auto Read";toast("गीता पाठ पूर्ण हुआ")}}
 $("speakShloka").onclick=()=>speakText($("verse").textContent,"sa-IN","speakShloka");
 $("speakVyakhya").onclick=()=>speakText($("explain").textContent,"hi-IN","speakVyakhya");
-$("stopSpeak").onclick=()=>{
- if("speechSynthesis" in window) speechSynthesis.cancel();
- setSpeakingUI(null,false);
- toast("Reading stopped");
-};
+$("stopSpeak").onclick=()=>{stopSpeech();autoRead=false;$("autoRead").classList.remove("auto-on");$("autoRead").textContent="▶ Auto Read";toast("Reading paused")};
+$("autoRead").onclick=()=>{autoRead=!autoRead;if(autoRead){$("autoRead").classList.add("auto-on");$("autoRead").textContent="⏸ Auto Read";readCurrentPage()}else{stopSpeech();$("autoRead").classList.remove("auto-on");$("autoRead").textContent="▶ Auto Read";toast("Auto Read paused")}};
 $("copy").onclick=async()=>{
  try{
   await navigator.clipboard.writeText(`${$("verse").textContent}
